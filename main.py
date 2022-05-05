@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-import os
+
 import time
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager, login_user, current_user, logout_user
@@ -11,7 +11,7 @@ from data.messages import Messages
 from forms.user import RegisterForm, LoginForm
 from mail import send_email
 from message_resources import *
-import json
+
 
 
 app = Flask(__name__)

@@ -1,5 +1,5 @@
 from flask import jsonify
-from flask_restful import reqparse, abort, Api, Resource
+from flask_restful import Resource, abort, Api, reqparse
 from data import db_session
 from data.messages import Messages
 

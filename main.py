@@ -10,6 +10,7 @@ from data.users import User
 from data.messages import Messages
 from forms.user import RegisterForm, LoginForm
 from mail import send_email
+from message_resources import *
 import json
 
 

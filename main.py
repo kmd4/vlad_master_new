@@ -127,6 +127,7 @@ def on_message(data):
     db_sess.commit()
 
 
+
 @socketio.on('join')
 def on_join(data):
     """User joins a room"""

@@ -142,10 +142,10 @@ def on_join(data):
     # Broadcast that new user has joined
     db_sess = db_session.create_session()
     messs = db_sess.query(Messages).all()
-    #messs = list(filter(lambda x: x.id == user_id and x.room == room, messs))
-    print(messs)
-    for i in messs:
-        print('content', i.content)
+    print(len(messs))
+    for i in range(len(messs)):
+        if messs[i].id == user_id and messs[i].room == room:
+            print('content', messs[i].content)
         # msg = i["content"]
         # username = i["id"]
         # room = i["user_id"]

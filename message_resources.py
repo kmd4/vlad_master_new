@@ -20,7 +20,7 @@ class MessageResource(Resource):
             only=('room', 'content', 'created_date', 'user_id'))})
 
 
-class Dialogs(Resource):
+class DialogsResourse(Resource):
     def get(self, room):
         session = db_session.create_session()
         mes = session.query(Messages).get(room).all()

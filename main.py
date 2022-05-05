@@ -24,6 +24,7 @@ socketio = SocketIO(app, manage_session=False, cors_allowed_origins='*')
 
 # Predefined rooms for chat
 ROOMS = []
+user_id = None
 
 
 
@@ -66,16 +67,16 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global ROOMS
+    global ROOMS, user_id
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user)
-            user.dialogs = user.dialogs + ' second'
+            user_id = user.id
             db_sess.commit()
-            ROOMS = user.dialogs.split()
+            ROOMS = user.dialogs.split(':')
             print(ROOMS)
             return redirect(url_for('chat'))
         return render_template('login.html',
@@ -126,7 +127,7 @@ def on_message(data):
     # Set timestamp
     time_stamp = time.strftime('%b-%d %I:%M%p', time.localtime())
     send({"username": username, "msg": msg, "time_stamp": time_stamp}, room=room, broadcast=True)
-    message = Messages(content=msg,  room=room)
+    message = Messages(content=msg,  room=room, user_id=user_id)
     db_sess = db_session.create_session()
     db_sess.add(message)
     db_sess.commit()
@@ -135,13 +136,25 @@ def on_message(data):
 @socketio.on('join')
 def on_join(data):
     """User joins a room"""
-
-    username = data["username"]
+    print(data)
     room = data["room"]
     join_room(room)
-
     # Broadcast that new user has joined
-    send({"msg": username + " has joined the " + room + " room."}, room=room)
+    db_sess = db_session.create_session()
+    messs = db_sess.query(Messages).all()
+    #messs = list(filter(lambda x: x.id == user_id and x.room == room, messs))
+    print(messs)
+    for i in messs:
+        print('content', i.content)
+        # msg = i["content"]
+        # username = i["id"]
+        # room = i["user_id"]
+        # # Set timestamp
+        # time_stamp = i['created_date']
+        # send({"username": username, "msg": msg, "time_stamp": time_stamp}, room=room, broadcast=True)
+
+
+    #send({"msg": username + " has joined the " + room + " room."}, room=room)
 
 
 @socketio.on('leave')

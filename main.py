@@ -121,7 +121,7 @@ def on_message(data):
     # Set timestamp
     time_stamp = time.strftime('%b-%d %I:%M%p', time.localtime())
     send({"username": username, "msg": msg, "time_stamp": time_stamp}, room=room, broadcast=True)
-    message = Messages(content=msg,  room=room, user_id=user_id)
+    message = Messages(content=msg,  room=room, user_id=user_id, created_date=time_stamp)
     db_sess = db_session.create_session()
     db_sess.add(message)
     db_sess.commit()
@@ -133,19 +133,18 @@ def on_join(data):
     print(data)
     room = data["room"]
     join_room(room)
+    if data["room"] == 'My_notes':
+        room = 0
     # Broadcast that new user has joined
     db_sess = db_session.create_session()
-    messs = db_sess.query(Messages).all()
-    print(len(messs))
-    for i in range(len(messs)):
-        if messs[i].id == user_id and messs[i].room == room:
-            print('content', messs[i].content)
-        # msg = i["content"]
-        # username = i["id"]
-        # room = i["user_id"]
-        # # Set timestamp
-        # time_stamp = i['created_date']
-        # send({"username": username, "msg": msg, "time_stamp": time_stamp}, room=room, broadcast=True)
+    messs = db_sess.query(Messages.content, Messages.user_id, Messages.room, Messages.created_date).all()
+    mess_fil = list(filter(lambda x: x[1] in [user_id, room] and x[2] in [str(user_id), str(room), 0], messs))
+    print(mess_fil)
+    for i in range(len(mess_fil)):
+        print(i)
+        if room == 0:
+            room = 'My_notes'
+        send({"username": mess_fil[i][1], "msg": mess_fil[i][0] + room, "time_stamp": mess_fil[i][3]}, room=room, broadcast=True)
 
 
     #send({"msg": username + " has joined the " + room + " room."}, room=room)

@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const username = document.querySelector('#get-username').innerHTML;
 
     // Set default room
-    let room = "My_notes"
-    joinRoom("My_notes");
+    let room = "1"
+    joinRoom("1");
 
     // Send messages
     document.querySelector('#send_message').onclick = () => {

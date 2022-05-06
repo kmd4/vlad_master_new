@@ -19,7 +19,7 @@ class User(SqlAlchemyBase, UserMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
-    dialogs = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='my_notes:1:2:3')
+    dialogs = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='1:2:3')
     mes = orm.relation("Messages", back_populates='user')
 
     def set_password(self, password):

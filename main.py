@@ -134,19 +134,14 @@ def on_join(data):
     print(data)
     room = data["room"]
     join_room(room)
-    if data["room"] == 'My_notes':
-        room = 0
     # Broadcast that new user has joined
     db_sess = db_session.create_session()
     messs = db_sess.query(Messages.content, Messages.user_id, Messages.room, Messages.created_date).all()
-    mess_fil = list(filter(lambda x: x[1] in [user_id, room] and x[2] in [str(user_id), str(room), 0], messs))
+    mess_fil = list(filter(lambda x: (x[1] == user_id and (x[2] == room or x[2] == 'My_notes')) or (room != 'My_notes' and x[1] == int(room) and x[2] == user_id), messs))
     print(mess_fil)
     for i in range(len(mess_fil)):
         print(i)
-        if room == 0:
-            room = 'My_notes'
         send({"username": mess_fil[i][1], "msg": mess_fil[i][0] + room, "time_stamp": mess_fil[i][3]}, room=room, broadcast=True)
-
 
     send({"msg": " has joined the " + str(room) + " room."}, room=room)
 

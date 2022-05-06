@@ -141,7 +141,7 @@ def on_join(data):
     print(mess_fil)
     for i in range(len(mess_fil)):
         print(i)
-        send({"username": mess_fil[i][1], "msg": mess_fil[i][0] + room, "time_stamp": mess_fil[i][3]}, room=room, broadcast=True)
+        send({"username": mess_fil[i][1], "msg": mess_fil[i][0], "time_stamp": mess_fil[i][3]}, room=room, broadcast=True)
 
     send({"msg": " has joined the " + str(room) + " room."}, room=room)
 

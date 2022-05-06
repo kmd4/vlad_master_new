@@ -148,7 +148,7 @@ def on_join(data):
         send({"username": mess_fil[i][1], "msg": mess_fil[i][0] + room, "time_stamp": mess_fil[i][3]}, room=room, broadcast=True)
 
 
-    #send({"msg": username + " has joined the " + room + " room."}, room=room)
+    send({"msg": " has joined the " + str(room) + " room."}, room=room)
 
 
 @socketio.on('leave')

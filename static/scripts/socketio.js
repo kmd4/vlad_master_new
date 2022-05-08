@@ -21,53 +21,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Display all incoming messages
     socket.on('message', data => {
-        var index
-        print(data.lenght);
-        for (index = 0; index < data.length; ++index):{
-            data1 = data[index]
-            if (data1.msg) {
-                const p = document.createElement('p');
-                const span_username = document.createElement('span');
-                const span_timestamp = document.createElement('span');
-                const br = document.createElement('br')
-                // Display user's own message
-                if (data1.username == username) {
-                        p.setAttribute("class", "my-msg");
 
-                        // Username
-                        span_username.setAttribute("class", "my-username");
-                        span_username.innerText = data1.username;
-
-                        // Timestamp
-                        span_timestamp.setAttribute("class", "timestamp");
-                        span_timestamp.innerText = data1.time_stamp;
-
-                        // HTML to append
-                        p.innerHTML += span_username.outerHTML + br.outerHTML + data1.msg + br.outerHTML + span_timestamp.outerHTML
-
-                        //Append
-                        document.querySelector('#display-message-section').append(p);
-                }
-                // Display other users' messages
-                else if (typeof data1.username !== 'undefined') {
+        // Display current message
+        if (data.msg) {
+            const p = document.createElement('p');
+            const span_username = document.createElement('span');
+            const span_timestamp = document.createElement('span');
+            const br = document.createElement('br')
+            // Display user's own message
+            if (data.username == username) {
                     p.setAttribute("class", "others-msg");
 
                     // Username
                     span_username.setAttribute("class", "other-username");
-                    span_username.innerText = data1.username;
+                    span_username.innerText = data.username;
 
                     // Timestamp
                     span_timestamp.setAttribute("class", "timestamp");
-                    span_timestamp.innerText = data1.time_stamp;
+                    span_timestamp.innerText = data.time_stamp;
 
                     // HTML to append
-                    p.innerHTML += span_username.outerHTML + br.outerHTML + data1.msg + br.outerHTML + span_timestamp.outerHTML;
+                    p.innerHTML += span_username.outerHTML + br.outerHTML + data.msg + br.outerHTML + span_timestamp.outerHTML;
 
                     //Append
                     document.querySelector('#display-message-section').append(p);
-                }
             }
-        }
+            // Display other users' messages
+            else if (typeof data.username !== 'undefined') {
+                    p.setAttribute("class", "my-msg");
+
+                    // Username
+                    span_username.setAttribute("class", "my-username");
+                    span_username.innerText = data.username;
+                    // Timestamp
+                    span_timestamp.setAttribute("class", "timestamp");
+                    span_timestamp.innerText = data.time_stamp;
+                    p.innerHTML += span_username.outerHTML + br.outerHTML + data.msg +'45' + br.outerHTML + span_timestamp.outerHTML
+                    document.querySelector('#display-message-section').append(p);
+            }
             // Display system message
             else {
                 printSysMsg(data.msg);
@@ -83,12 +74,64 @@ document.addEventListener('DOMContentLoaded', () => {
         p.onclick = () => {
             let newRoom = p.innerHTML
             // Check if user already in the room
-            if (newRoom != room) {
+            if (newRoom === room) {
+                msg = `You are already in ${room} room.`;
+                printSysMsg(msg);
+            } else {
                 leaveRoom(room);
-                joinRoom(newRoom, db);
+                joinRoom(newRoom);
                 room = newRoom;
             }
         };
+    });
+
+    socket.on('join', data => {
+
+        // Display current message
+        if (data.msg) {
+            const p = document.createElement('p');
+            const span_username = document.createElement('span');
+            const span_timestamp = document.createElement('span');
+            const br = document.createElement('br')
+            // Display user's own message
+            if (data.username == username) {
+                    p.setAttribute("class", "others-msg");
+
+                    // Username
+                    span_username.setAttribute("class", "other-username");
+                    span_username.innerText = data.username;
+
+                    // Timestamp
+                    span_timestamp.setAttribute("class", "timestamp");
+                    span_timestamp.innerText = data.time_stamp;
+
+                    // HTML to append
+                    p.innerHTML += span_username.outerHTML + br.outerHTML + data.msg + br.outerHTML + span_timestamp.outerHTML;
+
+                    //Append
+                    document.querySelector('#display-message-section').append(p);
+            }
+            // Display other users' messages
+            else if (typeof data.username !== 'undefined') {
+                    p.setAttribute("class", "my-msg");
+
+                    // Username
+                    span_username.setAttribute("class", "my-username");
+                    span_username.innerText = data.username;
+                    // Timestamp
+                    span_timestamp.setAttribute("class", "timestamp");
+                    span_timestamp.innerText = data.time_stamp;
+                    p.innerHTML += span_username.outerHTML + br.outerHTML + data.msg +'45' + br.outerHTML + span_timestamp.outerHTML
+                    document.querySelector('#display-message-section').append(p);
+            }
+            // Display system message
+            else {
+                printSysMsg(data.msg);
+            }
+
+
+        }
+        scrollDownChatWindow();
     });
 
     // Logout from chat
@@ -117,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Clear message area
         document.querySelector('#display-message-section').innerHTML = '';
-        //     printAllMessDB(db)
 
         // Autofocus on text box
         document.querySelector("#user_message").focus();
@@ -141,52 +183,3 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector("#user_message").focus();
     }
 });
-
-//function printAllMessDB(msg_data) {
-//        var index
-//        for (index = 0; index < msg_data.length; ++index):{
-//            data = msg_data[index]
-//            if (data.msg) {
-//                const p = document.createElement('p');
-//                const span_username = document.createElement('span');
-//                const span_timestamp = document.createElement('span');
-//                const br = document.createElement('br')
-//                // Display user's own message
-//                if (data.username == username) {
-//                        p.setAttribute("class", "my-msg");
-//
-//                        // Username
-//                        span_username.setAttribute("class", "my-username");
-//                        span_username.innerText = data.username;
-//
-//                        // Timestamp
-//                        span_timestamp.setAttribute("class", "timestamp");
-//                        span_timestamp.innerText = data.time_stamp;
-//
-//                        // HTML to append
-//                        p.innerHTML += span_username.outerHTML + br.outerHTML + data.msg + br.outerHTML + span_timestamp.outerHTML
-//
-//                        //Append
-//                        document.querySelector('#display-message-section').append(p);
-//                }
-//                // Display other users' messages
-//                else if (typeof data.username !== 'undefined') {
-//                    p.setAttribute("class", "others-msg");
-//
-//                    // Username
-//                    span_username.setAttribute("class", "other-username");
-//                    span_username.innerText = data.username;
-//
-//                    // Timestamp
-//                    span_timestamp.setAttribute("class", "timestamp");
-//                    span_timestamp.innerText = data.time_stamp;
-//
-//                    // HTML to append
-//                    p.innerHTML += span_username.outerHTML + br.outerHTML + data.msg + br.outerHTML + span_timestamp.outerHTML;
-//
-//                    //Append
-//                    document.querySelector('#display-message-section').append(p);
-//                }
-//            }
-//        }
-//});

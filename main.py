@@ -72,7 +72,7 @@ def login():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
-        if user: #and user.check_password(form.password.data):
+        if user :#and user.check_password(form.password.data):
             login_user(user)
             user_id = user.id
             db_sess.commit()
@@ -120,8 +120,8 @@ def on_message(data):
     room = data["room"]
     # Set timestamp
     time_stamp = time.strftime('%b-%d %I:%M%p', time.localtime())
-    send([{"username": username, "msg": msg+'1212', "time_stamp": time_stamp}], room=room, broadcast=True)
-    message = Messages(content=msg,  room=room, user_id=user_id, username=username, created_date=time_stamp)
+    send({"username": username, "msg": msg + '12', "time_stamp": time_stamp}, room=room, broadcast=True)
+    message = Messages(content=msg,  room=room, user_id=user_id, created_date=time_stamp, username=username)
     db_sess = db_session.create_session()
     db_sess.add(message)
     db_sess.commit()
@@ -133,16 +133,16 @@ def on_join(data):
     """User joins a room"""
     print(data)
     room = data["room"]
+    username = data['username']
     join_room(room)
     # Broadcast that new user has joined
     db_sess = db_session.create_session()
     messs = db_sess.query(Messages.content, Messages.user_id, Messages.room, Messages.created_date, Messages.username).all()
     mess_fil = list(filter(lambda x: (x[1] == user_id and (x[2] == room or x[2] == 'My_notes')) or (room != 'My_notes' and x[1] == int(room) and x[2] == user_id), messs))
-    mess_fil = list(map(lambda x: {"username": x[4], "msg": x[0] +'1111212', "time_stamp": x[3]}, mess_fil))
-    send(mess_fil, room=room, broadcast=True)
-    # for i in range(len(mess_fil)):
-    #     print(i)
-    #     send({"username": mess_fil[i][1], "msg": mess_fil[i][0], "time_stamp": mess_fil[i][3]}, room=room, broadcast=True)
+    mess_fil = list(map(lambda x: {"username": x[4], 'msg': x[0], 'time_stamp': x[3]}, mess_fil))
+    print(mess_fil)
+    for i in range(len(mess_fil)):
+         send(mess_fil[i], room=room, broadcast=True)
     #
     # send({"msg": " has joined the " + str(room) + " room."}, room=room)
 

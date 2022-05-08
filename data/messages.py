@@ -14,4 +14,5 @@ class Messages(SqlAlchemyBase):
     created_date = sqlalchemy.Column(sqlalchemy.String)
     user_id = sqlalchemy.Column(sqlalchemy.Integer,
                                 sqlalchemy.ForeignKey("users.id"))
+    username = sqlalchemy.Column(sqlalchemy.String)
     user = orm.relation('User')

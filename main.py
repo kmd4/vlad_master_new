@@ -120,12 +120,11 @@ def on_message(data):
     room = data["room"]
     # Set timestamp
     time_stamp = time.strftime('%b-%d %I:%M%p', time.localtime())
-    send({"username": username, "msg": msg + '12', "time_stamp": time_stamp}, room=room, broadcast=True)
-    message = Messages(content=msg,  room=room, user_id=user_id, created_date=time_stamp, username=username)
+    send({"username": username, "msg": msg, "time_stamp": time_stamp}, room=room, broadcast=True)
+    message = Messages(content=msg,  username_to=room, user_id=user_id, created_date=time_stamp, username=username)
     db_sess = db_session.create_session()
     db_sess.add(message)
     db_sess.commit()
-
 
 
 @socketio.on('join')
@@ -137,12 +136,12 @@ def on_join(data):
     join_room(room)
     # Broadcast that new user has joined
     db_sess = db_session.create_session()
-    messs = db_sess.query(Messages.content, Messages.user_id, Messages.room, Messages.created_date, Messages.username).all()
-    mess_fil = list(filter(lambda x: (x[1] == user_id and (x[2] == room or x[2] == 'My_notes')) or (room != 'My_notes' and x[1] == int(room) and x[2] == user_id), messs))
-    mess_fil = list(map(lambda x: {"username": x[4], 'msg': x[0], 'time_stamp': x[3]}, mess_fil))
+    messs = db_sess.query(Messages.content, Messages.username_to, Messages.created_date, Messages.username).all()
+    mess_fil = list(filter(lambda x: (x[1] == username and x[3] == room) or (x[1] == room and x[3] == username), messs))
+    mess_fil = list(map(lambda x: {"username": x[3], 'msg': x[0], 'time_stamp': x[2]}, mess_fil))
     print(mess_fil)
     for i in range(len(mess_fil)):
-         send(mess_fil[i], room=room, broadcast=True)
+        send(mess_fil[i], room=room, broadcast=True)
     #
     # send({"msg": " has joined the " + str(room) + " room."}, room=room)
 

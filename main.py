@@ -21,8 +21,6 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 socketio = SocketIO(app, manage_session=False, cors_allowed_origins='*')
-
-# Predefined rooms for chat
 ROOMS = []
 user_id = None
 
@@ -43,11 +41,11 @@ def register():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
-        # s = check_password(form.password.data)
-        # if s != True:
-        #     return render_template('register.html', title='Регистрация',
-        #                            form=form,
-        #                            message=s)
+        s = check_password(form.password.data)
+        if s != True:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message=s)
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first() or\
             db_sess.query(User).filter(User.name == form.name.data).first():
@@ -72,7 +70,7 @@ def login():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
-        if user :#and user.check_password(form.password.data):
+        if user and user.check_password(form.password.data):
             login_user(user)
             user_id = user.id
             db_sess.commit()
